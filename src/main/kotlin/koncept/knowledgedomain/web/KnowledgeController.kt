@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import koncept.knowledgedomain.Knowledge
 import koncept.knowledgedomain.KnowledgeService
 import koncept.knowledgedomain.web.dto.KnowledgeDto
+import koncept.knowledgedomain.web.dto.request.CreateKnowledgeRequest
 import koncept.knowledgedomain.web.mapper.KnowledgeMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -27,7 +27,7 @@ class KnowledgeController(private val knowledgeService: KnowledgeService) {
             ApiResponse(
                 description = "Get knowledge by id", responseCode = "200", content = [Content(
                     mediaType = "application/json", schema = Schema(
-                        implementation = Knowledge::class
+                        implementation = KnowledgeDto::class
                     )
                 )]
             ),
@@ -37,17 +37,18 @@ class KnowledgeController(private val knowledgeService: KnowledgeService) {
     )
     fun getKnowledge(@PathVariable id: Long): ResponseEntity<KnowledgeDto> {
         val knowledge = knowledgeService.getKnowledge(id)
-        val knowledgeDto = KnowledgeMapper.entityToDto(knowledge)
+        val children = knowledgeService.getChildren(id)
+        val knowledgeDto = KnowledgeMapper.entityToDto(knowledge, children)
         return ResponseEntity<KnowledgeDto>(knowledgeDto, HttpStatus.OK)
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     @Operation(
         responses = [
             ApiResponse(
                 description = "Creates new knowledge", responseCode = "201", content = [Content(
                     mediaType = "application/json", schema = Schema(
-                        implementation = Knowledge::class
+                        implementation = KnowledgeDto::class
                     )
                 )]
             )]
@@ -55,7 +56,7 @@ class KnowledgeController(private val knowledgeService: KnowledgeService) {
 
     fun createKnowledge(@RequestBody createKnowledgeRequest: CreateKnowledgeRequest): ResponseEntity<KnowledgeDto> {
         val knowledge = knowledgeService.createKnowledge(createKnowledgeRequest)
-        val knowledgeDto = KnowledgeMapper.entityToDto(knowledge)
+        val knowledgeDto = KnowledgeMapper.entityToDto(knowledge, mutableListOf())
         return ResponseEntity<KnowledgeDto>(knowledgeDto, HttpStatus.CREATED)
     }
 }

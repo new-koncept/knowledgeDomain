@@ -1,13 +1,14 @@
 package koncept.knowledgedomain.web.mapper
 
-import koncept.knowledgedomain.Knowledge
+import koncept.knowledgedomain.persistence.Knowledge
 import koncept.knowledgedomain.web.dto.KnowledgeDto
 
 object KnowledgeMapper {
-    fun entityToDto(knowledgeEntity: Knowledge): KnowledgeDto {
-        val parentDto = knowledgeEntity.parentKnowledge?.let {
-            entityToDto(it)
-        }
-        return KnowledgeDto(knowledgeEntity.id, parentDto, knowledgeEntity.name, knowledgeEntity.uri)
+    fun entityToDto(knowledgeEntity: Knowledge, knowledgeChildrenEntities: MutableList<Knowledge>?): KnowledgeDto {
+        val parentKnowledgeDto = knowledgeEntity.parentKnowledge?.let { entityToDto(it, null) }
+        val knowledgeChildrenDtos = knowledgeChildrenEntities?.map {
+            entityToDto(it, null)
+        }?.toMutableList() ?: mutableListOf()
+        return KnowledgeDto(knowledgeEntity.id, parentKnowledgeDto, knowledgeEntity.name, knowledgeEntity.namespace, knowledgeChildrenDtos)
     }
 }

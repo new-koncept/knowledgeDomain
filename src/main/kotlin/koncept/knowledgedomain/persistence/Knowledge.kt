@@ -1,4 +1,4 @@
-package koncept.knowledgedomain
+package koncept.knowledgedomain.persistence
 
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -15,7 +15,7 @@ class Knowledge {
     @Id
     @SequenceGenerator(name = "knowledgeIdGenerator", sequenceName = "knowledge_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "knowledgeIdGenerator")
-    val id: Long = 0L
+    var id: Long = 0L
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
@@ -25,5 +25,5 @@ class Knowledge {
     var name: String = ""
 
     @Column
-    var uri: String = "koncept"
+    var namespace: String = ""
 }

@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS knowledge
 (
     id        BIGINT PRIMARY KEY,
     parent_id BIGINT,
-    name      VARCHAR,
-    uri       VARCHAR,
+    namespace VARCHAR NOT NULL,
+    name      VARCHAR NOT NULL,
     CONSTRAINT fk_knowledge_parent FOREIGN KEY (parent_id) REFERENCES knowledge (id)
 );
